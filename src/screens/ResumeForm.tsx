@@ -9,7 +9,8 @@ import {
   View, 
   Alert, 
   Platform, 
-  PermissionsAndroid 
+  PermissionsAndroid, 
+  TouchableOpacity
 } from 'react-native';
 import { NativeModules } from 'react-native';
 
@@ -20,6 +21,9 @@ const ResumeForm = () => {
   const [email, setEmail] = useState('');
   const [Summary, setSummary] = useState('');
   const [mobile, setMobile] = useState('');
+  const [experience, setExperience] = useState('');
+  const [linkdin , setLinkdin] = useState('');
+  const [github , setGithub] = useState('');
 
   const requestStoragePermission = async () => {
     if (Platform.OS === 'android' && Platform.Version < 29) {
@@ -58,6 +62,9 @@ const ResumeForm = () => {
       email,
       Summary,
       mobile,
+      linkdin,
+      github,
+      experience
     };
 
     // Call the native module with template 1 (default)
@@ -69,6 +76,15 @@ const ResumeForm = () => {
         Alert.alert('Error', error.message || 'Failed to generate resume.');
       });
   };
+
+  const createInputElement =()=>{
+    return (
+      <TextInput
+      style={styles.input}
+      
+      />
+    )
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -94,6 +110,20 @@ const ResumeForm = () => {
           placeholder='Mobile'
           style={styles.input}
         />
+        <Text style={styles.label}>Linkdin</Text>
+        <TextInput
+          value={linkdin}
+          onChangeText={setLinkdin}
+          placeholder='Linkdin'
+          style={styles.input}
+        />
+        <Text style={styles.label}>Github</Text>
+        <TextInput
+          value={github}
+          onChangeText={setGithub}
+          placeholder='github'
+          style={styles.input}
+        />
         <Text style={styles.label}>Summary</Text>
         <TextInput
           value={Summary}
@@ -102,6 +132,18 @@ const ResumeForm = () => {
           multiline
           placeholder='Summary'
         />
+        <Text style={styles.label}>Experience</Text>
+        <TextInput
+          value={experience}
+          onChangeText={setExperience}
+          placeholder='Experience'
+          style={styles.input}
+        />
+        <TouchableOpacity 
+        style={{marginTop:10 , alignItems:'flex-end'}}
+        onPress={createInputElement}>
+          <Text style={{fontSize:15}}>+</Text>
+        </TouchableOpacity>
         <View style={styles.buttonContainer}>
           <Button title="Submit" onPress={handleSubmit} />
         </View>

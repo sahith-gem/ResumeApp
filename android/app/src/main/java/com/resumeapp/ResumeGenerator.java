@@ -99,11 +99,11 @@ public class ResumeGenerator extends ReactContextBaseJavaModule {
                 out.write(pdfData); // Write the PDF data to the shared Downloads folder
                 out.close();
                 // Returning the path is less straightforward with scoped storage;
-                // you may choose to return the Uri.toString() or a custom path reference.
+                // we may choose to return the Uri.toString() or a custom path reference.
                 return uri.toString();
             } catch (Exception e) {
                 e.printStackTrace();
-                return null; // Handle the error properly in your app
+                return null; // Handle the error properly in the app
             }
         } else { // Android 9 (API 28) and below
             String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + pdfFilename;
@@ -112,7 +112,7 @@ public class ResumeGenerator extends ReactContextBaseJavaModule {
                 return path;
             } catch (Exception e) {
                 e.printStackTrace();
-                return null; // Handle the error properly in your app
+                return null; // Handle the error properly in the app
             }
         }
     }
