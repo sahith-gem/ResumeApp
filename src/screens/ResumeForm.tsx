@@ -17,13 +17,59 @@ import { NativeModules } from 'react-native';
 const { ResumeGenerator } = NativeModules;
 
 const ResumeForm = () => {
+  // Personal & Contact Information
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [Summary, setSummary] = useState('');
+  const [address, setAddress] = useState('');
   const [mobile, setMobile] = useState('');
+  const [linkedin, setLinkedin] = useState('');
+  const [github, setGithub] = useState('');
+
+  // Objective & Experience
+  const [Summary, setSummary] = useState('');
   const [experience, setExperience] = useState('');
-  const [linkdin , setLinkdin] = useState('');
-  const [github , setGithub] = useState('');
+
+  // Education Details
+  // Undergraduate
+  const [undergradDegree, setUndergradDegree] = useState('');
+  const [undergradInstitution, setUndergradInstitution] = useState('');
+  const [undergradCgpa, setUndergradCgpa] = useState('');
+  // Higher Secondary
+  const [higherInstitution, setHigherInstitution] = useState('');
+  const [higherCgpa, setHigherCgpa] = useState('');
+  // Secondary
+  const [secondaryInstitution, setSecondaryInstitution] = useState('');
+  const [secondaryCgpa, setSecondaryCgpa] = useState('');
+
+  // Skills, Projects & Awards
+  const [skills, setSkills] = useState('');
+  const [projects, setProjects] = useState('');
+  const [projectTitle, setProjectTitle] = useState('');
+  const [awards, setAwards] = useState('');
+
+  // Dynamic additional sections (if needed)
+  const [sections, setSections] = useState<{ heading: string; content: string }[]>([]);
+
+  const addSection = () => {
+    setSections([...sections, { heading: '', content: '' }]);
+  };
+
+  const removeSection = (index: number) => {
+    const newSections = sections.filter((_, i) => i !== index);
+    setSections(newSections);
+  };
+
+  const updateSectionHeading = (text: string, index: number) => {
+    const newSections = [...sections];
+    newSections[index].heading = text;
+    setSections(newSections);
+  };
+
+  const updateSectionContent = (text: string, index: number) => {
+    const newSections = [...sections];
+    newSections[index].content = text;
+    setSections(newSections);
+  };
 
   const requestStoragePermission = async () => {
     if (Platform.OS === 'android' && Platform.Version < 29) {
@@ -45,7 +91,6 @@ const ResumeForm = () => {
         return false;
       }
     }
-    // For Android 10+ and iOS, permission is not needed in the same way.
     return true;
   };
 
@@ -56,19 +101,31 @@ const ResumeForm = () => {
       return;
     }
 
-    // Build the resume data object
+    // Build the resume data object with all the fields required for the PDF
     const resumeData = {
       name,
       email,
-      Summary,
+      address,
       mobile,
-      linkdin,
+      linkedin,
       github,
-      experience
+      Summary,
+      experience,
+      undergradDegree,
+      undergradInstitution,
+      undergradCgpa,
+      higherInstitution,
+      higherCgpa,
+      secondaryInstitution,
+      secondaryCgpa,
+      skills,
+      projects,
+      projectTitle,
+      awards,
+      sections, 
     };
 
-    // Call the native module with template 1 (default)
-    ResumeGenerator.generateResume(resumeData, 2)
+    await ResumeGenerator.generateResume(resumeData, 1)
       .then((result: string) => {
         Alert.alert('Resume Generated', `PDF saved at: ${result}`);
       })
@@ -77,73 +134,119 @@ const ResumeForm = () => {
       });
   };
 
-  const createInputElement =()=>{
-    return (
-      <TextInput
-      style={styles.input}
-      
-      />
-    )
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.form}>
+        {/* Personal Information */}
         <Text style={styles.label}>Name</Text>
-        <TextInput
-          onChangeText={setName}
-          value={name}
-          placeholder='Name'
-          style={styles.input}
-        />
+        <TextInput onChangeText={setName} value={name} placeholder='Name' style={styles.input} />
+
         <Text style={styles.label}>Email</Text>
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          placeholder='Email'
-          style={styles.input}
-        />
+        <TextInput onChangeText={setEmail} value={email} placeholder='Email' style={styles.input} />
+
+        <Text style={styles.label}>Address</Text>
+        <TextInput onChangeText={setAddress} value={address} placeholder='Address' style={styles.input} />
+
         <Text style={styles.label}>Mobile</Text>
+        <TextInput onChangeText={setMobile} value={mobile} placeholder='Mobile' style={styles.input} />
+
+        <Text style={styles.label}>LinkedIn</Text>
+        <TextInput onChangeText={setLinkedin} value={linkedin} placeholder='LinkedIn URL' style={styles.input} />
+
+        <Text style={styles.label}>GitHub</Text>
+        <TextInput onChangeText={setGithub} value={github} placeholder='GitHub URL' style={styles.input} />
+
+        {/* Objective & Experience */}
+        <Text style={styles.label}>Objective (Summary)</Text>
         <TextInput
-          value={mobile}
-          onChangeText={setMobile}
-          placeholder='Mobile'
-          style={styles.input}
-        />
-        <Text style={styles.label}>Linkdin</Text>
-        <TextInput
-          value={linkdin}
-          onChangeText={setLinkdin}
-          placeholder='Linkdin'
-          style={styles.input}
-        />
-        <Text style={styles.label}>Github</Text>
-        <TextInput
-          value={github}
-          onChangeText={setGithub}
-          placeholder='github'
-          style={styles.input}
-        />
-        <Text style={styles.label}>Summary</Text>
-        <TextInput
-          value={Summary}
           onChangeText={setSummary}
+          value={Summary}
+          placeholder='Objective / Summary'
           style={[styles.input, styles.multiLineInput]}
           multiline
-          placeholder='Summary'
         />
+
         <Text style={styles.label}>Experience</Text>
+        <TextInput onChangeText={setExperience} value={experience} placeholder='Experience' style={styles.input} />
+
+        {/* Education Section */}
+        <Text style={styles.sectionHeader}>Education (Undergraduate)</Text>
+        <Text style={styles.label}>Degree</Text>
+        <TextInput onChangeText={setUndergradDegree} value={undergradDegree} placeholder='Degree' style={styles.input} />
+        <Text style={styles.label}>Institution</Text>
+        <TextInput onChangeText={setUndergradInstitution} value={undergradInstitution} placeholder='Institution' style={styles.input} />
+        <Text style={styles.label}>CGPA</Text>
+        <TextInput onChangeText={setUndergradCgpa} value={undergradCgpa} placeholder='CGPA' style={styles.input} />
+
+        <Text style={styles.sectionHeader}>Education (Higher Secondary)</Text>
+        <Text style={styles.label}>Institution</Text>
+        <TextInput onChangeText={setHigherInstitution} value={higherInstitution} placeholder='Institution' style={styles.input} />
+        <Text style={styles.label}>CGPA</Text>
+        <TextInput onChangeText={setHigherCgpa} value={higherCgpa} placeholder='CGPA' style={styles.input} />
+
+        <Text style={styles.sectionHeader}>Education (Secondary)</Text>
+        <Text style={styles.label}>Institution</Text>
+        <TextInput onChangeText={setSecondaryInstitution} value={secondaryInstitution} placeholder='Institution' style={styles.input} />
+        <Text style={styles.label}>CGPA</Text>
+        <TextInput onChangeText={setSecondaryCgpa} value={secondaryCgpa} placeholder='CGPA' style={styles.input} />
+
+        {/* Skills, Projects & Awards */}
+        <Text style={styles.label}>Skills</Text>
         <TextInput
-          value={experience}
-          onChangeText={setExperience}
-          placeholder='Experience'
-          style={styles.input}
+          onChangeText={setSkills}
+          value={skills}
+          placeholder='Skills'
+          style={[styles.input, styles.multiLineInput]}
+          multiline
         />
-        <TouchableOpacity 
-        style={{marginTop:10 , alignItems:'flex-end'}}
-        onPress={createInputElement}>
-          <Text style={{fontSize:15}}>+</Text>
+
+        <Text style={styles.label}>Projects</Text>
+        
+        <TextInput
+          onChangeText={setProjects}
+          value={projects}
+          placeholder='Projects'
+          style={[styles.input, styles.multiLineInput]}
+          multiline
+        />
+
+        <Text style={styles.label}>Awards & Certifications</Text>
+        <TextInput
+          onChangeText={setAwards}
+          value={awards}
+          placeholder='Awards & Certifications'
+          style={[styles.input, styles.multiLineInput]}
+          multiline
+        />
+
+        {/* Additional Dynamic Sections */}
+        {sections.map((section, index) => (
+          <View key={index} style={styles.sectionContainer}>
+            <Text style={styles.label}>Section Heading</Text>
+            <TouchableOpacity style={{ position: 'absolute', right: 10, top: 10 }} onPress={() => removeSection(index)}>
+              <Text>-</Text>
+            </TouchableOpacity>
+            <TextInput
+              value={section.heading}
+              style={styles.input}
+              onChangeText={(text) => updateSectionHeading(text, index)}
+              placeholder="Heading"
+            />
+            <Text style={styles.label}>Section Content</Text>
+            <TextInput
+              value={section.content}
+              style={[styles.input, styles.multiLineInput]}
+              onChangeText={(text) => updateSectionContent(text, index)}
+              placeholder="Content"
+              multiline
+            />
+          </View>
+        ))}
+        
+        <TouchableOpacity style={{ marginTop: 10, alignItems: 'flex-end' }} onPress={addSection}>
+          <Text style={{ fontSize: 15 }}>+</Text>
         </TouchableOpacity>
+        
         <View style={styles.buttonContainer}>
           <Button title="Submit" onPress={handleSubmit} />
         </View>
@@ -153,6 +256,7 @@ const ResumeForm = () => {
 };
 
 export default ResumeForm;
+
 
 const styles = StyleSheet.create({
   container: {
@@ -180,7 +284,22 @@ const styles = StyleSheet.create({
     height: 100,
     textAlignVertical: 'top',
   },
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginTop: 20,
+    color: '#333',
+  },
   buttonContainer: {
     marginTop: 24,
+    marginBottom: 24,
+   },
+  sectionContainer: {
+    marginTop: 16,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 6,
+    backgroundColor: '#fafafa',
   },
 });
