@@ -8,8 +8,7 @@ public class TemplateFactory {
             case 1:
                 return new TemplateOne();
             case 2:
-                return new TemplateOne();
-                // return new TemplateTwo();
+                return new TemplateTwo();
             default:
                 throw new IllegalArgumentException("Invalid template ID: " + templateId);
         }

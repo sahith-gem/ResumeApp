@@ -77,11 +77,13 @@ public class TemplateOne implements ResumeTemplate {
         document.add(educationTitle);
         Paragraph eduParagraph = new Paragraph();
         eduParagraph.setLeading(16);
-        // Here you can combine various education fields (e.g., undergrad, higher, secondary)
+        // combine various education fields (e.g., undergrad, higher, secondary)
         eduParagraph.add(new Chunk("Undergraduate: " + resumeData.getString("undergradDegree") + "\n", subHeadingFont));
         eduParagraph.add(new Chunk(resumeData.getString("undergradInstitution") + "\n", contentFont));
         eduParagraph.add(new Chunk("CGPA: " + resumeData.getString("undergradCgpa") + "\n", contentFont));
         // You can add similar blocks for higher and secondary if present.
+        
+
         document.add(eduParagraph);
         document.add(Chunk.NEWLINE);
 
